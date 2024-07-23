@@ -28,10 +28,10 @@ class EmojiGame extends Component {
         onClickPlayAgain={this.resetGame}
         score={clickedEmojisList.length}
       />
-    )    
-  }  
+    )
+  }
 
-  finishedGameAndSetTopScore = currentScore => {
+  finishGameAndSetTopScore = currentScore => {
     const {topScore} = this.state
     let newTopScore = topScore
 
@@ -40,62 +40,64 @@ class EmojiGame extends Component {
     }
 
     this.setState({topScore: newTopScore, isGameInProgress: false})
-  }  
+  }
 
   clickEmoji = id => {
     const {emojisList} = this.props
-    const {clicledEmojisList} = this.state
-    const isEmojiPresent = clicledEmojisList.length
+    const {clickedEmojisList} = this.state
+    const isEmojiPresent = clickedEmojisList.includes(id)
+    const clickedEmojisLength = clickedEmojisList.length
 
     if (isEmojiPresent) {
-      this.finishedGameAndSetTopScore(clicledEmojisLength)
+      this.finishGameAndSetTopScore(clickedEmojisLength)
     } else {
       if (emojisList.length - 1 === clickedEmojisLength) {
-        this.finishedGameAndSetTopScore(emojisList.length)
+        this.finishGameAndSetTopScore(emojisList.length)
       }
       this.setState(previousState => ({
-        clicledEmojisList: [...previousState.clickedEmojisList, id],
-      }))  
+        clickedEmojisList: [...previousState.clickedEmojisList, id],
+      }))
     }
+  }
 
-    getShuffledEmojisList = () => {
-      const {emojisList} = this.props
+  getShuffledEmojisList = () => {
+    const {emojisList} = this.props
 
-      return emojisList.sort(() => Math.random() - 0.5)
-    }
+    return emojisList.sort(() => Math.random() - 0.5)
+  }
 
-    renderEmojisList = () => {
-      const getShuffledEmojisList = this.getShuffledEmojisList()
+  renderEmojisList = () => {
+    const shuffledEmojisList = this.getShuffledEmojisList()
 
-      return (
-        <ul className="emojis-list-container">
-          {ShuffledEmojisList.map(emojisObject => (
-            <EmojiCard
-              key={emojiObject.id}
-              emojiDetails={emojiObject}
-              clickEmoji={this.clickEmoji}
-            />
-          ))}    
-        </ul>
-      )  
-    }
-
-    render() {
-      const {clickedEmojisList, isGameInProgress, topScore} = this.state
-
-      return (
-        <div className="app-container">
-          <NavBar
-            currentScore={clickedEmojisList.length}
-            isGameInProgress={isGameInProgress}
-            topScore={topScore}
+    return (
+      <ul className="emojis-list-container">
+        {shuffledEmojisList.map(emojiObject => (
+          <EmojiCard
+            key={emojiObject.id}
+            emojiDetails={emojiObject}
+            clickEmoji={this.clickEmoji}
           />
-          <div className="emoji-game-body">
-            {isGameInProgress ? this.renderEmojisList() = this.renderScoreCard()}
-          </div>  
+        ))}
+      </ul>
+    )
+  }
+
+  render() {
+    const {clickedEmojisList, isGameInProgress, topScore} = this.state
+
+    return (
+      <div className="app-container">
+        <NavBar
+          currentScore={clickedEmojisList.length}
+          isGameInProgress={isGameInProgress}
+          topScore={topScore}
+        />
+        <div className="emoji-game-body">
+          {isGameInProgress ? this.renderEmojisList() : this.renderScoreCard()}
         </div>
-      )     
-   }
+      </div>
+    )
+  }
 }
 
 export default EmojiGame
